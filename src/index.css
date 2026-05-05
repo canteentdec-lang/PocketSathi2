@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  
+  --color-brand-navy: #0D1B2A;
+  --color-brand-amber: #F7A325;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-white text-brand-navy font-sans;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    @apply bg-brand-navy text-white;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl;
+  }
+  
+  .dark .glass-card {
+    @apply bg-white/5 border-white/10;
+  }
+
+  .btn-primary {
+    @apply bg-brand-amber text-brand-navy font-bold py-3 px-6 rounded-xl hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-brand-amber/20;
+  }
+
+  .card-glow {
+    @apply transition-all duration-300 hover:shadow-xl hover:shadow-brand-amber/10 hover:-translate-y-1;
+  }
+}
