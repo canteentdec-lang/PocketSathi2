@@ -82,7 +82,8 @@ function getDefaultUserData(): UserData {
     savedCalculations: [],
     chatHistory: [],
     onboarding: null,
-    courseProgress: {}
+    courseProgress: {},
+    savedAiBlogs: []
   };
 }
 

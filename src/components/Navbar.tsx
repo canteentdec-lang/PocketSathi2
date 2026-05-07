@@ -8,11 +8,12 @@ interface NavbarProps {
   currentUser: UserType | null;
   onLoginClick: () => void;
   onLogout: () => void;
+  onProfileClick: () => void;
   isDark: boolean;
   toggleTheme: () => void;
 }
 
-export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, toggleTheme }: NavbarProps) {
+export default function Navbar({ currentUser, onLoginClick, onLogout, onProfileClick, isDark, toggleTheme }: NavbarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navLinks = [
@@ -58,12 +59,15 @@ export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, to
             <div className="flex items-center gap-4 ml-4">
               {currentUser ? (
                 <div className="flex items-center gap-4">
-                  <div className="flex flex-col items-end">
+                  <button 
+                    onClick={onProfileClick}
+                    className="flex flex-col items-end hover:opacity-80 transition-opacity text-right"
+                  >
                     <span className="text-xs text-gray-500 dark:text-gray-400">Welcome,</span>
                     <span className="text-sm font-bold truncate max-w-[120px]">
                       {currentUser.name} 👋
                     </span>
-                  </div>
+                  </button>
                   <button
                     onClick={onLogout}
                     className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 transition-colors"
@@ -103,7 +107,24 @@ export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, to
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white dark:bg-brand-navy border-b border-gray-200 dark:border-white/10 overflow-hidden"
           >
-            <div className="px-4 pt-2 pb-6 space-y-2">
+            <div className="px-4 pt-4 pb-6 space-y-2">
+              {currentUser && (
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    onProfileClick();
+                  }}
+                  className="w-full flex items-center gap-3 p-4 bg-brand-amber/10 rounded-xl mb-4 text-left"
+                >
+                  <div className="w-10 h-10 bg-brand-amber rounded-full flex items-center justify-center text-brand-navy font-bold">
+                    {currentUser.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-bold">Welcome back,</p>
+                    <p className="text-sm font-extrabold">{currentUser.name} 👋</p>
+                  </div>
+                </button>
+              )}
               {navLinks.map((link) => (
                 <NavLink
                   key={link.label}

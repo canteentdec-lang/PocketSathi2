@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Smartphone, PieChart, BarChart3, Plus, FileUp, Trash2, Edit3, Check, Search, IndianRupee } from 'lucide-react';
+import { Smartphone, PieChart, BarChart3, Plus, FileUp, Trash2, Edit3, Check, Search, IndianRupee, Sparkles, BrainCircuit, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { User, UserData, Transaction } from '../types';
 import { CATEGORIES } from '../constants';
 import { formatCurrency } from '../hooks/useData';
 import Papa from 'papaparse';
+import { GoogleGenAI } from "@google/genai";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -352,36 +353,11 @@ export default function UPIAnalyzer({ currentUser, userData, onUpdateTransaction
                     </div>
                  </div>
 
-                 <div className="glass-card p-8">
+                 <div className="glass-card p-8 min-h-[350px]">
                     <h4 className="font-bold mb-6 flex items-center gap-2">
-                       <BarChart3 size={18} className="text-brand-amber" /> Month over Month
+                       <BrainCircuit size={18} className="text-brand-amber" /> AI Insights & Advice
                     </h4>
-                    <div className="h-[240px]">
-                       <Bar 
-                         data={{
-                           labels: ['Previous', 'Current'],
-                           datasets: [{
-                             label: 'Total Spends',
-                             data: [stats.totalSpent * 0.85, stats.totalSpent], // Simulated prev month
-                             backgroundColor: ['#3b82f6', '#f7a325'],
-                             borderRadius: 12,
-                           }]
-                         }}
-                         options={{
-                           maintainAspectRatio: false,
-                           plugins: { legend: { display: false } },
-                           scales: { 
-                             y: { display: false },
-                             x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } }
-                           }
-                         }}
-                       />
-                    </div>
-                    <p className="mt-8 text-xs text-center text-gray-500 font-medium">
-                       {stats.totalSpent > stats.totalSpent * 0.85 
-                          ? `You spent 15% more than last month. Watch those ${stats.highestCat[0]} costs! 📈` 
-                          : 'Better budgeting! You spent less than last month. 🚀'}
-                    </p>
+                    <AIAnalyzer transactions={transactions} userData={userData} />
                  </div>
               </div>
 
@@ -448,6 +424,96 @@ export default function UPIAnalyzer({ currentUser, userData, onUpdateTransaction
         </div>
       </div>
     </section>
+  );
+}
+
+function AIAnalyzer({ transactions, userData }: { transactions: Transaction[], userData: UserData }) {
+  const [insight, setInsight] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+
+  const generateInsight = async () => {
+    setLoading(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      
+      const stats = transactions.reduce((acc, t) => {
+        if (t.type === 'expense') {
+          acc.expenses[t.category] = (acc.expenses[t.category] || 0) + t.amount;
+          acc.totalExpenses += t.amount;
+        } else {
+          acc.totalIncome += t.amount;
+        }
+        return acc;
+      }, { expenses: {} as any, totalExpenses: 0, totalIncome: 0 });
+
+      const budgetGoal = userData.onboarding?.savingsGoal || 0;
+      const budgetSplit = userData.onboarding?.budgetSplit || { needs: 50, wants: 30, savings: 20 };
+
+      const prompt = `Analyze these finances for a personal assistant. 
+      Total Income: ₹${stats.totalIncome}
+      Total Expenses: ₹${stats.totalExpenses}
+      Expenses by Category: ${JSON.stringify(stats.expenses)}
+      Target Savings Goal: ₹${budgetGoal}
+      Preferred Budget Ratio (Needs:Wants:Savings): ${budgetSplit.needs}:${budgetSplit.wants}:${budgetSplit.savings}
+      
+      Give 3 short, punchy, actionable bullets of advice or summary. Keep it financial, friendly but firm if spending is high. Use Indian Rupee context. Max 60 words total.`;
+
+      const result = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: [{ parts: [{ text: prompt }] }],
+      });
+      setInsight(result.text || "I couldn't generate specific advice right now. Your spending seems active!");
+    } catch (error) {
+      console.error("Insight failed:", error);
+      setInsight("I couldn't analyze your data right now. Keep tracking to see patterns!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {insight ? (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="p-4 bg-brand-amber/5 border border-brand-amber/10 rounded-2xl"
+        >
+          <div className="flex items-start gap-3 mb-3">
+             <Sparkles className="text-brand-amber shrink-0 mt-1" size={16} />
+             <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert">
+                {insight.split('\n').map((line, i) => (
+                  <p key={i} className="mb-2 last:mb-0">{line}</p>
+                ))}
+             </div>
+          </div>
+          <button 
+            onClick={generateInsight}
+            className="text-[10px] uppercase font-bold text-gray-400 hover:text-brand-amber flex items-center gap-1 mt-4 transition-colors"
+          >
+            <RefreshCw size={10} /> Regenerate
+          </button>
+        </motion.div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-10 text-center space-y-4">
+           <div className="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center text-brand-amber">
+              <BrainCircuit size={24} />
+           </div>
+           <div className="space-y-1">
+              <p className="text-sm font-bold">Ready for Smart Analysis?</p>
+              <p className="text-[10px] text-gray-500">I'll look at your spending patterns and budget goals.</p>
+           </div>
+           <button 
+             onClick={generateInsight}
+             disabled={loading}
+             className="btn-primary py-2 px-6 text-xs flex items-center gap-2"
+           >
+             {loading ? <RefreshCw className="animate-spin" size={14} /> : <Sparkles size={14} />}
+             {loading ? 'Analyzing...' : 'Generate AI Advice'}
+           </button>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -56,6 +56,14 @@ export interface ChatMessage {
   timestamp: string;
 }
 
+export interface AiBlog {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  topic: string;
+}
+
 export interface OnboardingData {
   salary: number;
   categories: string[];
@@ -74,4 +82,5 @@ export interface UserData {
   chatHistory: ChatMessage[];
   onboarding: OnboardingData | null;
   courseProgress: Record<string, string[]>; // courseId -> list of completed lessonIds
+  savedAiBlogs: AiBlog[];
 }

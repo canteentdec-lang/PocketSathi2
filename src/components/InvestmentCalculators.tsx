@@ -100,6 +100,9 @@ export default function InvestmentCalculators({ currentUser, userData, onUpdateC
                  </AnimatePresence>
               </div>
 
+              {/* Smart Recommendations Section */}
+              <SmartRecommendations type={activeTab} />
+
               {/* History Expandable */}
               {userData.savedCalculations.length > 0 && (
                 <div className="glass-card p-6">
@@ -252,8 +255,265 @@ function StatBox({ label, value, amber }: { label: string, value: string, amber?
   );
 }
 
-// Stub for other tabs similarly implemented
-function StepUpCalc({ currentUser, onSave, onLoginPrompt }: any) { return <div className="p-12 text-center text-gray-500 italic">Step-Up SIP Calculator View</div>; }
-function LumpSumCalc({ currentUser, onSave, onLoginPrompt }: any) { return <div className="p-12 text-center text-gray-500 italic">Lump Sum Calculator View</div>; }
-function FDCalc({ currentUser, onSave, onLoginPrompt }: any) { return <div className="p-12 text-center text-gray-500 italic">FD Calculator View</div>; }
-function EMICalc({ currentUser, onSave, onLoginPrompt }: any) { return <div className="p-12 text-center text-gray-500 italic">EMI Calculator View</div>; }
+// Calculators Implementation
+
+function StepUpCalc({ currentUser, onSave, onLoginPrompt }: { currentUser: any, onSave: (s: SavedCalculation) => void, onLoginPrompt: () => void }) {
+  const [inputs, setInputs] = useState({ investment: 5000, return: 12, years: 10, stepUp: 10 });
+  const [label, setLabel] = useState('My Step-Up SIP');
+
+  const result = useMemo(() => {
+    let maturity = 0;
+    let totalInvested = 0;
+    let monthlyInvest = inputs.investment;
+    const r = (inputs.return / 100) / 12;
+
+    for (let year = 1; year <= inputs.years; year++) {
+      for (let month = 1; month <= 12; month++) {
+        maturity = (maturity + monthlyInvest) * (1 + r);
+        totalInvested += monthlyInvest;
+      }
+      monthlyInvest = monthlyInvest * (1 + inputs.stepUp / 100);
+    }
+    return { maturity, invested: totalInvested, returns: maturity - totalInvested };
+  }, [inputs]);
+
+  const handleSave = () => {
+    if (!currentUser) return onLoginPrompt();
+    onSave({
+      id: Date.now().toString(),
+      type: 'sip-stepup',
+      title: label,
+      inputs,
+      result,
+      date: new Date().toISOString()
+    });
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div className="space-y-6">
+          <h3 className="text-xl font-bold">Step-Up SIP Calculator</h3>
+          <div className="space-y-4">
+             <CalcInput label="Monthly Investment (₹)" value={inputs.investment} onChange={v => setInputs({ ...inputs, investment: v })} min={500} max={1000000} step={500} />
+             <CalcInput label="Annual Step-up (%)" value={inputs.stepUp} onChange={v => setInputs({ ...inputs, stepUp: v })} min={1} max={50} step={1} />
+             <CalcInput label="Expected Return (% p.a)" value={inputs.return} onChange={v => setInputs({ ...inputs, return: v })} min={1} max={30} step={0.5} />
+             <CalcInput label="Duration (Years)" value={inputs.years} onChange={v => setInputs({ ...inputs, years: v })} min={1} max={40} step={1} />
+          </div>
+          <div className="pt-4 border-t border-gray-100 dark:border-white/10">
+             <div className="flex gap-2">
+                <input type="text" value={label} onChange={e => setLabel(e.target.value)} className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl px-4 text-sm focus:outline-none" />
+                <button onClick={handleSave} className="bg-brand-amber text-brand-navy p-3 rounded-xl"><Save size={18} /></button>
+             </div>
+          </div>
+       </div>
+       <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-3 gap-3">
+             <StatBox label="Invested" value={formatCurrency(result.invested)} />
+             <StatBox label="Returns" value={formatCurrency(result.returns)} />
+             <StatBox label="Maturity" value={formatCurrency(result.maturity)} amber />
+          </div>
+          <div className="h-48 border border-gray-100 dark:border-white/10 rounded-2xl p-4">
+             <Bar 
+               data={{
+                 labels: Array.from({ length: inputs.years }, (_, i) => `Yr ${i + 1}`),
+                 datasets: [{
+                   label: 'Investment',
+                   data: Array.from({ length: inputs.years }, (_, i) => {
+                     let monthly = inputs.investment;
+                     for(let y=0; y<i; y++) monthly *= (1 + inputs.stepUp/100);
+                     return monthly * 12;
+                   }),
+                   backgroundColor: 'rgba(247, 163, 37, 0.2)',
+                   borderRadius: 4
+                 }]
+               }}
+               options={{ maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }}
+             />
+          </div>
+       </div>
+    </div>
+  );
+}
+
+function LumpSumCalc({ currentUser, onSave, onLoginPrompt }: { currentUser: any, onSave: (s: SavedCalculation) => void, onLoginPrompt: () => void }) {
+  const [inputs, setInputs] = useState({ investment: 100000, return: 12, years: 10 });
+  const [label, setLabel] = useState('Investment Goal');
+
+  const result = useMemo(() => {
+    const P = inputs.investment;
+    const r = inputs.return / 100;
+    const n = inputs.years;
+    const maturity = P * Math.pow(1 + r, n);
+    return { maturity, invested: P, returns: maturity - P };
+  }, [inputs]);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div className="space-y-6">
+          <h3 className="text-xl font-bold">Lump Sum Calculator</h3>
+          <div className="space-y-4">
+             <CalcInput label="Total Investment (₹)" value={inputs.investment} onChange={v => setInputs({ ...inputs, investment: v })} min={5000} max={10000000} step={5000} />
+             <CalcInput label="Expected Return (% p.a)" value={inputs.return} onChange={v => setInputs({ ...inputs, return: v })} min={1} max={30} step={0.5} />
+             <CalcInput label="Duration (Years)" value={inputs.years} onChange={v => setInputs({ ...inputs, years: v })} min={1} max={40} step={1} />
+          </div>
+       </div>
+       <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-3 gap-3">
+             <StatBox label="Principal" value={formatCurrency(result.invested)} />
+             <StatBox label="Returns" value={formatCurrency(result.returns)} />
+             <StatBox label="Maturity" value={formatCurrency(result.maturity)} amber />
+          </div>
+          <div className="h-48 border border-gray-100 dark:border-white/10 rounded-2xl p-4 flex items-center justify-center">
+             <div className="text-center">
+                <PieChart size={64} className="text-brand-amber mx-auto mb-4 opacity-50" />
+                <p className="text-xs font-bold text-gray-500 uppercase">Growth Visualization</p>
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+}
+
+function FDCalc({ currentUser, onSave, onLoginPrompt }: { currentUser: any, onSave: (s: SavedCalculation) => void, onLoginPrompt: () => void }) {
+  const [inputs, setInputs] = useState({ principal: 100000, rate: 7, years: 5 });
+  const [label, setLabel] = useState('My Fixed Deposit');
+
+  const result = useMemo(() => {
+    const P = inputs.principal;
+    const r = inputs.rate / 100;
+    const n = inputs.years;
+    // Compounded quarterly is standard in India for FD
+    const maturity = P * Math.pow(1 + (r / 4), 4 * n);
+    return { maturity, invested: P, returns: maturity - P };
+  }, [inputs]);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div className="space-y-6">
+          <h3 className="text-xl font-bold">Fixed Deposit Calculator</h3>
+          <div className="space-y-4">
+             <CalcInput label="Principal Amount (₹)" value={inputs.principal} onChange={v => setInputs({ ...inputs, principal: v })} min={1000} max={10000000} step={1000} />
+             <CalcInput label="Interest Rate (% p.a)" value={inputs.rate} onChange={v => setInputs({ ...inputs, rate: v })} min={1} max={15} step={0.1} />
+             <CalcInput label="Tenure (Years)" value={inputs.years} onChange={v => setInputs({ ...inputs, years: v })} min={1} max={25} step={1} />
+          </div>
+       </div>
+       <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-3 gap-3">
+             <StatBox label="Principal" value={formatCurrency(result.invested)} />
+             <StatBox label="Interest" value={formatCurrency(result.returns)} />
+             <StatBox label="Total Value" value={formatCurrency(result.maturity)} amber />
+          </div>
+          <div className="p-6 bg-gray-50 dark:bg-white/5 rounded-2xl">
+             <div className="flex items-center gap-3 mb-4">
+                <Landmark className="text-brand-amber" />
+                <h4 className="text-sm font-bold">Bank Note</h4>
+             </div>
+             <p className="text-xs text-gray-500 leading-relaxed">
+                Standard FDs in India compound interest quarterly. Your effective yield is slightly higher than the nominal rate.
+             </p>
+          </div>
+       </div>
+    </div>
+  );
+}
+
+function EMICalc({ currentUser, onSave, onLoginPrompt }: { currentUser: any, onSave: (s: SavedCalculation) => void, onLoginPrompt: () => void }) {
+  const [inputs, setInputs] = useState({ loan: 500000, rate: 9, tenure: 60 });
+  const [label, setLabel] = useState('Home/Car Loan');
+
+  const result = useMemo(() => {
+    const P = inputs.loan;
+    const r = (inputs.rate / 100) / 12;
+    const n = inputs.tenure;
+    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    const totalPayable = emi * n;
+    return { emi, totalPayable, totalInterest: totalPayable - P };
+  }, [inputs]);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div className="space-y-6">
+          <h3 className="text-xl font-bold">EMI Calculator</h3>
+          <div className="space-y-4">
+             <CalcInput label="Loan Amount (₹)" value={inputs.loan} onChange={v => setInputs({ ...inputs, loan: v })} min={10000} max={100000000} step={10000} />
+             <CalcInput label="Interest Rate (% p.a)" value={inputs.rate} onChange={v => setInputs({ ...inputs, rate: v })} min={5} max={25} step={0.1} />
+             <CalcInput label="Tenure (Months)" value={inputs.tenure} onChange={v => setInputs({ ...inputs, tenure: v })} min={6} max={360} step={6} />
+          </div>
+       </div>
+       <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-3 gap-3">
+             <StatBox label="Monthly EMI" value={formatCurrency(result.emi)} amber />
+             <StatBox label="Prinicipal" value={formatCurrency(inputs.loan)} />
+             <StatBox label="Interest" value={formatCurrency(result.totalInterest)} />
+          </div>
+          <div className="p-6 bg-red-500/5 border border-red-500/10 rounded-2xl">
+             <p className="text-[10px] font-bold text-red-500 uppercase mb-2">Total Payable</p>
+             <p className="text-2xl font-extrabold">{formatCurrency(result.totalPayable)}</p>
+             <div className="mt-4 h-2 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden flex">
+                <div 
+                  className="h-full bg-brand-navy dark:bg-white/20" 
+                  style={{ width: `${(inputs.loan / result.totalPayable) * 100}%` }} 
+                />
+                <div 
+                  className="h-full bg-red-500" 
+                  style={{ width: `${(result.totalInterest / result.totalPayable) * 100}%` }} 
+                />
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+}
+
+function SmartRecommendations({ type }: { type: TabType }) {
+  const recommendations = {
+    sip: [
+      { title: 'Flexi-Cap Funds', desc: 'Ideal for 5+ years. Diversifies across top, mid, and small companies.', icon: '📈' },
+      { title: 'Index Funds', desc: 'Nifty 50 or Sensex funds for stable, market-mirroring returns.', icon: '🏗️' }
+    ],
+    stepup: [
+      { title: 'Mid-Cap Growth', desc: 'Since you are aggressive with step-ups, mid-cap funds match your high growth needs.', icon: '🚀' },
+      { title: 'Multi-Cap Funds', desc: 'Balanced risk for long-term compounding with annual increases.', icon: '⚖️' }
+    ],
+    lumpsum: [
+      { title: 'STP Strategy', desc: 'Avoid single entry. Invest lump sum in Liquid fund and move to Equity via STP.', icon: '💧' },
+      { title: 'Arbitrage Funds', desc: 'Safe for 6-12 months lump sum parking with better tax efficiency than FD.', icon: '🔄' }
+    ],
+    fd: [
+      { title: 'Debt Mutual Funds', desc: 'Corporate Bond funds may offer 1-2% higher returns than standard FDs.', icon: '🏦' },
+      { title: 'Small Finance Banks', desc: 'Often offer 0.5-1% higher interest for the same tenure.', icon: '🏢' }
+    ],
+    emi: [
+      { title: 'Prepayment Trick', desc: 'Pay 1 extra EMI every year to reduce a 20-yr loan to ~12 yrs.', icon: '⚡' },
+      { title: 'Interest Offset', desc: 'Consider Home Loan Overdraft accounts if you have surplus cash.', icon: '💰' }
+    ]
+  };
+
+  const items = recommendations[type] || [];
+
+  return (
+    <div className="space-y-4">
+       <div className="flex items-center gap-2">
+          <div className="p-1.5 bg-brand-amber/20 rounded-lg">
+             <TrendingUp size={16} className="text-brand-amber" />
+          </div>
+          <h4 className="text-lg font-display font-extrabold">Smart Next Steps</h4>
+       </div>
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {items.map((item, i) => (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              key={i} 
+              className="p-5 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl hover:border-brand-amber/30 transition-all group"
+            >
+               <div className="text-2xl mb-3">{item.icon}</div>
+               <h5 className="font-bold mb-1 group-hover:text-brand-amber transition-colors">{item.title}</h5>
+               <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+            </motion.div>
+          ))}
+       </div>
+    </div>
+  );
+}

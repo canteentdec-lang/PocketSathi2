@@ -10,6 +10,7 @@ import LearnHub from './components/LearnHub';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import OnboardingModal from './components/OnboardingModal';
+import ProfileSummaryModal from './components/ProfileSummaryModal';
 import ScrollToTop from './components/ScrollToTop';
 import { useLocalStorage, useUserData } from './hooks/useData';
 import { UserData } from './types';
@@ -20,6 +21,7 @@ export default function App() {
   
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('ps_theme');
     return saved === 'light' ? false : true; // Default to dark
@@ -40,6 +42,14 @@ export default function App() {
       setIsOnboardingOpen(true);
     }
   }, [currentUser]);
+
+  const handleProfileClick = () => {
+    if (currentUser?.onboarded && userData.onboarding) {
+       setIsProfileOpen(true);
+    } else {
+       setIsOnboardingOpen(true);
+    }
+  };
 
   const handleUpdateCourseProgress = (courseId: string, lessonId: string) => {
     const currentProgress = userData.courseProgress[courseId] || [];
@@ -63,6 +73,7 @@ export default function App() {
           currentUser={currentUser} 
           onLoginClick={() => setIsAuthModalOpen(true)} 
           onLogout={logout}
+          onProfileClick={handleProfileClick}
           isDark={isDark}
           toggleTheme={() => setIsDark(!isDark)}
         />
@@ -74,7 +85,7 @@ export default function App() {
                 currentUser={currentUser}
                 userData={userData}
                 onLoginPrompt={() => setIsAuthModalOpen(true)}
-                onEditProfile={() => setIsOnboardingOpen(true)}
+                onEditProfile={handleProfileClick}
               />
             } />
             
@@ -118,6 +129,7 @@ export default function App() {
               <LearnHub 
                 currentUser={currentUser}
                 userData={userData}
+                onUpdateUserData={updateUserData}
                 onUpdateCourseProgress={handleUpdateCourseProgress}
                 onLoginPrompt={() => setIsAuthModalOpen(true)}
               />
@@ -152,6 +164,15 @@ export default function App() {
             setIsOnboardingOpen(false);
           }}
         />
+
+        {userData.onboarding && (
+          <ProfileSummaryModal
+            isOpen={isProfileOpen}
+            onClose={() => setIsProfileOpen(false)}
+            initialData={userData.onboarding}
+            onUpdate={(data) => saveOnboarding(data)}
+          />
+        )}
       </div>
     </BrowserRouter>
   );

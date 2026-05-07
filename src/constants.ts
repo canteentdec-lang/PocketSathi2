@@ -51,6 +51,19 @@ How to improve it:
 - 20% for Savings & Debt Repayment: SIPs, Emergency fund, extra loan payments.
 
 If you can't hit 20% savings immediately, start with 5% and work your way up. Consistency is more important than the initial amount.`
+  },
+  {
+    id: 'no-cost-emi-truth',
+    title: 'The Truth About "No-Cost" EMIs',
+    description: 'Is it really zero interest? Uncovering the hidden processing fees and lost cash discounts.',
+    tag: 'Advanced',
+    content: `No-Cost EMI is a popular marketing gimmick. While the bank might not charge you "interest" on paper, here's how it actually works:
+
+1. **Lost Discounts:** Often, the "No-Cost" option is only available if you pay the full MRP. If you paid upfront, you might have gotten a 10% discount.
+2. **Processing Fees:** Banks often charge a one-time processing fee (₹199 - ₹500) which effectively acts as interest.
+3. **GST on Interest:** Even if the retailer gives you a discount equivalent to the interest, you still pay GST on that interest component to the bank.
+
+Before choosing No-Cost EMI, calculate the actual cost and see if a credit card full payment discount is better.`
   }
 ];
 
