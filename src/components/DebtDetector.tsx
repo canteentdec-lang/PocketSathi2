@@ -110,21 +110,21 @@ export default function DebtDetector({ currentUser, userData, onUpdateAnalyses, 
   };
 
   return (
-    <section id="debt" className="py-24 px-4 bg-gray-50 dark:bg-brand-navy/50">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
-           <div className="flex items-center gap-3 text-brand-amber mb-2">
-              <ShieldAlert size={28} />
-              <h2 className="text-3xl font-display font-extrabold">Debt Detector</h2>
+    <section id="debt" className="flex-grow pt-8 pb-4 px-6 lg:px-8 bg-gray-50 dark:bg-brand-navy/50 h-[calc(100vh-80px)] overflow-hidden flex flex-col">
+      <div className="max-w-6xl mx-auto w-full flex-grow flex flex-col overflow-y-auto pr-2 scrollbar-hide">
+        <div className="mb-6">
+           <div className="flex items-center gap-3 text-brand-amber mb-1">
+              <ShieldAlert size={24} />
+              <h2 className="text-2xl font-display font-extrabold">Debt Detector</h2>
            </div>
-           <p className="text-gray-500 dark:text-gray-400">Identify loan traps and understand the true cost of borrowing.</p>
+           <p className="text-sm text-gray-500 dark:text-gray-400">Identify loan traps and understand the true cost of borrowing.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
            {/* Input Panel */}
-           <div className="space-y-6">
-              <div className="bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-3xl p-8 shadow-lg space-y-6">
-                 <h4 className="font-bold flex items-center gap-2">Loan Details</h4>
+           <div className="space-y-4">
+              <div className="bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-2xl p-6 shadow-lg space-y-4">
+                 <h4 className="text-sm font-bold flex items-center gap-2">Loan Details</h4>
                  
                  <div className="space-y-4">
                     <div className="space-y-2">
@@ -138,60 +138,60 @@ export default function DebtDetector({ currentUser, userData, onUpdateAnalyses, 
                        />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Loan Amount (₹)</label>
-                          <input 
-                            type="number"
-                            value={formData.loanAmount}
-                            onChange={(e) => setFormData({ ...formData, loanAmount: Number(e.target.value) })}
-                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl p-3 focus:outline-none focus:border-brand-amber"
-                          />
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Interest Rate (% p.a.)</label>
-                          <input 
-                            type="number"
-                            step="0.1"
-                            value={formData.interestRate}
-                            onChange={(e) => setFormData({ ...formData, interestRate: Number(e.target.value) })}
-                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl p-3 focus:outline-none focus:border-brand-amber"
-                          />
-                       </div>
-                    </div>
+                     <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-gray-400 uppercase">Loan Amount (₹)</label>
+                           <input 
+                             type="number"
+                             value={formData.loanAmount}
+                             onChange={(e) => setFormData({ ...formData, loanAmount: Number(e.target.value) })}
+                             className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-amber"
+                           />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-gray-400 uppercase">Interest Rate (% p.a.)</label>
+                           <input 
+                             type="number"
+                             step="0.1"
+                             value={formData.interestRate}
+                             onChange={(e) => setFormData({ ...formData, interestRate: Number(e.target.value) })}
+                             className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-amber"
+                           />
+                        </div>
+                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Tenure (Months)</label>
-                          <input 
-                            type="number"
-                            value={formData.tenure}
-                            onChange={(e) => setFormData({ ...formData, tenure: Number(e.target.value) })}
-                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl p-3 focus:outline-none focus:border-brand-amber"
-                          />
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Processing Fee</label>
-                          <div className="flex gap-2">
-                             <input 
-                               type="number"
-                               value={formData.processingFee}
-                               onChange={(e) => setFormData({ ...formData, processingFee: Number(e.target.value) })}
-                               className="flex-[2] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl p-3 focus:outline-none focus:border-brand-amber"
-                             />
-                             <select
-                               value={formData.processingFeeType}
-                               onChange={(e) => setFormData({ ...formData, processingFeeType: e.target.value as any })}
-                               className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl p-3 text-xs"
-                             >
-                                <option value="amount">₹</option>
-                                <option value="percent">%</option>
-                             </select>
-                          </div>
-                       </div>
-                    </div>
+                     <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-gray-400 uppercase">Tenure (Months)</label>
+                           <input 
+                             type="number"
+                             value={formData.tenure}
+                             onChange={(e) => setFormData({ ...formData, tenure: Number(e.target.value) })}
+                             className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-amber"
+                           />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-gray-400 uppercase">Processing Fee</label>
+                           <div className="flex gap-1">
+                              <input 
+                                type="number"
+                                value={formData.processingFee}
+                                onChange={(e) => setFormData({ ...formData, processingFee: Number(e.target.value) })}
+                                className="flex-[2] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg p-2 text-sm focus:outline-none focus:border-brand-amber"
+                              />
+                              <select
+                                value={formData.processingFeeType}
+                                onChange={(e) => setFormData({ ...formData, processingFeeType: e.target.value as any })}
+                                className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg p-2 text-[10px]"
+                              >
+                                 <option value="amount">₹</option>
+                                 <option value="percent">%</option>
+                              </select>
+                           </div>
+                        </div>
+                     </div>
 
-                    <div className="flex gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl">
+                     <div className="flex gap-2 p-3 bg-gray-50 dark:bg-white/5 rounded-xl">
                        <label className="flex-1 flex items-center gap-2 cursor-pointer group">
                           <input 
                             type="checkbox" 

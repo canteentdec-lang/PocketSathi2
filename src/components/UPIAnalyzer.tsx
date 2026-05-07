@@ -148,9 +148,9 @@ export default function UPIAnalyzer({ currentUser, userData, onUpdateTransaction
   };
 
   return (
-    <section id="upi" className="py-24 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+    <section id="upi" className="flex-grow pt-8 pb-4 px-6 lg:px-8 h-[calc(100vh-80px)] overflow-hidden flex flex-col">
+      <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col overflow-y-auto pr-2 scrollbar-hide">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
            <div>
               <div className="flex items-center gap-3 text-brand-amber mb-2">
                  <Smartphone size={24} />

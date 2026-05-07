@@ -98,12 +98,12 @@ export default function Coach({ currentUser, userData, onUpdateUserData, onLogin
   };
 
   return (
-    <section id="coach" className="py-24 px-4 bg-gray-50 dark:bg-brand-navy/50">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-8">
+    <section id="coach" className="flex-grow flex flex-col pt-8 pb-4 px-6 lg:px-8 bg-gray-50 dark:bg-brand-navy/50 h-[calc(100vh-80px)] overflow-hidden">
+      <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col overflow-y-auto pr-2 scrollbar-hide">
+        <div className="flex flex-col md:flex-row gap-6 flex-grow">
           
           {/* Chat Interface */}
-          <div className="flex-[2] flex flex-col h-[600px] bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-xl">
+          <div className="flex-[2] flex flex-col h-full bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-xl">
              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-brand-navy text-white">
                 <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-full bg-brand-amber flex items-center justify-center text-brand-navy">

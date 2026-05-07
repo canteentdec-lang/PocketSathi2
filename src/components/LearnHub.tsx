@@ -31,9 +31,9 @@ export default function LearnHub({ currentUser, userData, onUpdateCourseProgress
   };
 
   return (
-    <section id="learn" className="py-24 px-4 bg-gray-50 dark:bg-brand-navy/50">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center space-y-4 mb-16">
+    <section id="learn" className="flex-grow pt-8 pb-4 px-6 lg:px-8 bg-gray-50 dark:bg-brand-navy/50 h-[calc(100vh-80px)] overflow-hidden flex flex-col">
+      <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col overflow-y-auto pr-2 scrollbar-hide">
+        <div className="text-center space-y-4 mb-12">
            <div className="flex items-center justify-center gap-3 text-brand-amber">
               <BookOpen size={28} />
               <h2 className="text-4xl font-display font-extrabold">Learn Hub</h2>

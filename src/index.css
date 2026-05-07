@@ -40,4 +40,12 @@
   .card-glow {
     @apply transition-all duration-300 hover:shadow-xl hover:shadow-brand-amber/10 hover:-translate-y-1;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

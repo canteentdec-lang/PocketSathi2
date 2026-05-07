@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, X, User, LogOut, Sun, Moon, IndianRupee } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { NavLink, Link } from 'react-router-dom';
 import { User as UserType } from '../types';
 
 interface NavbarProps {
@@ -15,48 +16,46 @@ export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, to
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navLinks = [
-    { label: 'Coach', href: '#coach' },
-    { label: 'UPI Analyzer', href: '#upi' },
-    { label: 'Debt Detector', href: '#debt' },
-    { label: 'Investment', href: '#investment' },
-    { label: 'Learn Hub', href: '#learn' },
+    { label: 'Coach', path: '/coach' },
+    { label: 'UPI Analyzer', path: '/upi' },
+    { label: 'Debt Detector', path: '/debt' },
+    { label: 'Investment', path: '/investment' },
+    { label: 'Learn Hub', path: '/learn' },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-brand-navy/80 backdrop-blur-lg border-b border-gray-200 dark:border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-5xl bg-white/80 dark:bg-brand-navy/80 backdrop-blur-lg border border-gray-200 dark:border-white/10 rounded-2xl shadow-lg">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center text-brand-navy">
               <IndianRupee size={24} strokeWidth={3} />
             </div>
             <span className="text-2xl font-display font-extrabold text-brand-navy dark:text-white">
               PocketSathi
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <NavLink
                 key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-amber dark:hover:text-brand-amber transition-colors"
+                to={link.path}
+                className={({ isActive }) => 
+                  `text-sm font-medium transition-colors ${
+                    isActive 
+                      ? 'text-brand-amber' 
+                      : 'text-gray-600 dark:text-gray-300 hover:text-brand-amber dark:hover:text-brand-amber'
+                  }`
+                }
               >
                 {link.label}
-              </a>
+              </NavLink>
             ))}
             
             <div className="flex items-center gap-4 ml-4">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                aria-label="Toggle Theme"
-              >
-                {isDark ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-
               {currentUser ? (
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-end">
@@ -85,12 +84,6 @@ export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, to
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
-             <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-              >
-                {isDark ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 dark:text-gray-300"
@@ -112,14 +105,20 @@ export default function Navbar({ currentUser, onLoginClick, onLogout, isDark, to
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navLinks.map((link) => (
-                <a
+                <NavLink
                   key={link.label}
-                  href={link.href}
+                  to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className="block px-3 py-4 text-base font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-white/5"
+                  className={({ isActive }) => 
+                    `block px-3 py-4 text-base font-medium rounded-lg ${
+                      isActive 
+                        ? 'bg-brand-amber/10 text-brand-amber' 
+                        : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                    }`
+                  }
                 >
                   {link.label}
-                </a>
+                </NavLink>
               ))}
               {!currentUser && (
                 <button

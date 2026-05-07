@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, TrendingUp, ShieldCheck, Cpu, Smartphone, Calendar, User, Edit3 } from 'lucide-react';
+import { ArrowRight, TrendingUp, ShieldCheck, Cpu, Smartphone, Calendar, Edit3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { OnboardingData, User as UserType } from '../types';
 import { formatCurrency } from '../hooks/useData';
 
@@ -13,10 +14,10 @@ interface HeroProps {
   transactionsCount: number;
 }
 
-export default function Hero({ currentUser, onboarding, onExploreClick, onTryCoachClick, onEditProfile, transactionsCount }: HeroProps) {
+export default function Hero({ currentUser, onboarding, onEditProfile, transactionsCount }: HeroProps) {
   if (currentUser && onboarding) {
     return (
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-8 pb-16 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="bg-brand-amber/10 border-2 border-brand-amber/20 rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
             {/* Background elements */}
@@ -37,9 +38,9 @@ export default function Hero({ currentUser, onboarding, onExploreClick, onTryCoa
                    <button onClick={onEditProfile} className="btn-primary py-2 px-6 flex items-center gap-2">
                      <Edit3 size={18} /> Edit Profile
                    </button>
-                   <button onClick={onTryCoachClick} className="px-6 py-2 border-2 border-brand-amber/20 font-bold rounded-xl hover:bg-brand-amber/5 transition-all">
+                   <Link to="/coach" className="px-6 py-2 border-2 border-brand-amber/20 font-bold rounded-xl hover:bg-brand-amber/5 transition-all">
                      Chat with Coach
-                   </button>
+                   </Link>
                 </div>
               </div>
 
@@ -71,7 +72,7 @@ export default function Hero({ currentUser, onboarding, onExploreClick, onTryCoa
   }
 
   return (
-    <section className="relative pt-40 pb-32 overflow-hidden">
+    <section className="relative pt-6 pb-24 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-brand-amber/10 blur-[100px] rounded-full" />
@@ -81,7 +82,7 @@ export default function Hero({ currentUser, onboarding, onExploreClick, onTryCoa
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 text-center space-y-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center space-y-8">
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
@@ -111,36 +112,36 @@ export default function Hero({ currentUser, onboarding, onExploreClick, onTryCoa
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
         >
-          <button onClick={onExploreClick} className="btn-primary w-full sm:w-auto text-lg py-4 px-10 flex items-center justify-center gap-3 group">
-            Explore Features <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </button>
-          <button onClick={onTryCoachClick} className="w-full sm:w-auto px-10 py-4 font-bold rounded-2xl border-2 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all text-lg">
+          <Link to="/upi" className="btn-primary w-full sm:w-auto text-lg py-4 px-10 flex items-center justify-center gap-3 group">
+            Analyze Spends <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+          <Link to="/coach" className="w-full sm:w-auto px-10 py-4 font-bold rounded-2xl border-2 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all text-lg">
             Try the Coach
-          </button>
+          </Link>
         </motion.div>
 
         {/* Feature Preview Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 pt-20">
-          <FeaturePreview icon={<Cpu />} label="AI Coach" href="#coach" />
-          <FeaturePreview icon={<Smartphone />} label="UPI Analyzer" href="#upi" />
-          <FeaturePreview icon={<ShieldCheck />} label="Debt Detector" href="#debt" />
-          <FeaturePreview icon={<TrendingUp />} label="Investments" href="#investment" />
-          <FeaturePreview icon={<Calendar />} label="Learn Hub" href="#learn" />
+          <FeaturePreview icon={<Cpu />} label="AI Coach" to="/coach" />
+          <FeaturePreview icon={<Smartphone />} label="UPI Analyzer" to="/upi" />
+          <FeaturePreview icon={<ShieldCheck />} label="Debt Detector" to="/debt" />
+          <FeaturePreview icon={<TrendingUp />} label="Investments" to="/investment" />
+          <FeaturePreview icon={<Calendar />} label="Learn Hub" to="/learn" />
         </div>
       </div>
     </section>
   );
 }
 
-function FeaturePreview({ icon, label, href }: { icon: React.ReactNode, label: string, href: string }) {
+function FeaturePreview({ icon, label, to }: { icon: React.ReactNode, label: string, to: string }) {
   return (
-    <a href={href} className="glass-card card-glow p-6 flex flex-col items-center gap-3 group border border-transparent hover:border-brand-amber/30">
+    <Link to={to} className="glass-card card-glow p-6 flex flex-col items-center gap-3 group border border-transparent hover:border-brand-amber/30">
       <div className="w-12 h-12 rounded-xl bg-brand-amber/10 flex items-center justify-center text-brand-amber group-hover:scale-110 transition-transform">
         {icon}
       </div>
       <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 group-hover:text-brand-amber transition-colors">
         {label}
       </span>
-    </a>
+    </Link>
   );
 }

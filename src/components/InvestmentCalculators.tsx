@@ -48,9 +48,9 @@ export default function InvestmentCalculators({ currentUser, userData, onUpdateC
   ];
 
   return (
-    <section id="investment" className="py-24 px-4 bg-white dark:bg-brand-navy">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
+    <section id="investment" className="flex-grow pt-8 pb-4 px-6 lg:px-8 bg-white dark:bg-brand-navy h-[calc(100vh-80px)] overflow-hidden flex flex-col">
+      <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col overflow-y-auto pr-2 scrollbar-hide">
+        <div className="mb-8">
            <div className="flex items-center gap-3 text-brand-amber mb-2">
               <TrendingUp size={28} />
               <h2 className="text-3xl font-display font-extrabold">Wealth Calculators</h2>
