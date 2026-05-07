@@ -101,104 +101,90 @@ export default function LearnHub({ currentUser, userData, onUpdateUserData, onUp
            </div>
         </div>
 
-        {/* AI Blog Maker */}
-        <div className="mb-16">
-          <div className="bg-gradient-to-br from-brand-amber/20 to-brand-amber/5 rounded-[2.5rem] p-8 md:p-12 border border-brand-amber/30 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-10">
-              <Sparkles size={120} className="text-brand-amber" />
-            </div>
-            
-            <div className="relative z-10 max-w-2xl">
-              <div className="flex items-center gap-3 text-brand-amber mb-4">
-                <Wand2 size={24} />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">PocketSathi Labs</span>
-              </div>
-              <h3 className="text-3xl font-display font-bold mb-4">AI Blog Maker</h3>
-              <p className="text-gray-500 mb-8 leading-relaxed">
-                Want to learn about something specific? Type a topic (e.g., "Digital Gold", "Credit card rewards", "Term insurance") and let our AI generate a personalized guide for you.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 relative">
-                <div className="flex-grow relative">
-                  <input 
-                    type="text"
-                    value={aiTopic}
-                    onChange={(e) => setAiTopic(e.target.value)}
-                    placeholder="Enter a financial topic..."
-                    className="w-full bg-white dark:bg-brand-navy border-2 border-transparent focus:border-brand-amber rounded-2xl px-6 py-4 outline-none shadow-sm transition-all"
-                  />
-                  {/* Suggestions Dropdown */}
-                  <AnimatePresence>
-                    {suggestedBlogs.length > 0 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl z-20 overflow-hidden"
-                      >
-                        <div className="p-3 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                          Already on PocketSathi
-                        </div>
-                        {suggestedBlogs.map((blog) => (
-                          <button
-                            key={blog.id}
-                            onClick={() => {
-                              setSelectedBlog(blog);
-                              setAiTopic('');
-                            }}
-                            className="w-full text-left p-4 hover:bg-brand-amber/10 transition-colors flex items-center justify-between group"
-                          >
-                            <span className="font-bold text-sm">{blog.title}</span>
-                            <ChevronRight size={16} className="text-gray-300 group-hover:text-brand-amber transition-colors" />
-                          </button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <button 
-                  onClick={generateAIBlog}
-                  disabled={isGenerating || !aiTopic.trim()}
-                  className="btn-primary px-8 py-4 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
-                >
-                  {isGenerating ? (
-                    <Loader2 size={20} className="animate-spin" />
-                  ) : (
-                    <Sparkles size={20} />
-                  )}
-                  {isGenerating ? 'Generating...' : 'Generate Insight'}
-                </button>
-              </div>
-
-              <AnimatePresence>
-                {aiResult && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-8 bg-white dark:bg-brand-navy rounded-3xl p-8 border border-brand-amber/20 shadow-xl"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <h4 className="text-xl font-display font-bold text-brand-amber">{aiResult.title}</h4>
-                      <button onClick={() => setAiResult(null)} className="text-gray-400 hover:text-gray-600 transition-colors">
-                        <X size={16} />
-                      </button>
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
-                      {aiResult.content}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
         {/* Blogs Section */}
         <div className="space-y-8 mb-20">
            <div className="flex justify-between items-end">
               <h3 className="text-2xl font-display font-extrabold flex items-center gap-2">Articles & Insights</h3>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* AI Blog Maker Card - Now the first item */}
+              <motion.div 
+                layout
+                className="glass-card card-glow flex flex-col items-start overflow-visible group bg-gradient-to-br from-brand-amber/5 to-transparent border-brand-amber/30 h-full"
+              >
+                <div className="p-8 space-y-4 w-full flex flex-col h-full">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 bg-brand-amber/10 text-brand-amber text-[10px] font-bold uppercase rounded-full tracking-wider border border-brand-amber/20 flex items-center gap-1.5">
+                      <Sparkles size={10} /> AI Maker
+                    </span>
+                  </div>
+                  
+                  <h4 className="text-xl font-display font-extrabold leading-tight">Personalized Guide</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Type a topic and let AI generate a financial guide for you.</p>
+                  
+                  <div className="relative pt-2 flex-grow">
+                    <div className="relative">
+                      <input 
+                        type="text"
+                        value={aiTopic}
+                        onChange={(e) => setAiTopic(e.target.value)}
+                        placeholder="e.g., SIP, ELSS..."
+                        className="w-full bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 focus:border-brand-amber rounded-xl px-4 py-3 text-sm outline-none shadow-inner transition-all"
+                      />
+                      <button 
+                        onClick={generateAIBlog}
+                        disabled={isGenerating || !aiTopic.trim()}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-brand-amber p-2 hover:bg-brand-amber/10 rounded-lg transition-colors disabled:opacity-30"
+                      >
+                        {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Wand2 size={18} />}
+                      </button>
+                    </div>
+
+                    {/* Suggestions Dropdown */}
+                    <AnimatePresence>
+                      {suggestedBlogs.length > 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-brand-navy border border-gray-200 dark:border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden"
+                        >
+                          {suggestedBlogs.map((blog) => (
+                            <button
+                              key={blog.id}
+                              onClick={() => {
+                                setSelectedBlog(blog);
+                                setAiTopic('');
+                              }}
+                              className="w-full text-left p-3 hover:bg-brand-amber/10 transition-colors flex items-center justify-between group/suggest"
+                            >
+                              <span className="font-bold text-xs">{blog.title}</span>
+                              <ChevronRight size={14} className="text-gray-300 group-hover/suggest:text-brand-amber transition-colors" />
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {aiResult && (
+                    <button 
+                      onClick={() => {
+                        setSelectedBlog({
+                          ...aiResult,
+                          tag: 'AI Generated',
+                          id: 'temp-ai'
+                        });
+                        setAiResult(null);
+                      }}
+                      className="w-full py-2 bg-brand-amber text-brand-navy text-xs font-bold rounded-xl mt-2 flex items-center justify-center gap-2"
+                    >
+                      View Generated Insight <ChevronRight size={14} />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+
               {filteredBlogs.map((blog) => (
                 <motion.div 
                   key={blog.id} 

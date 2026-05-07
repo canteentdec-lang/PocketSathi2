@@ -68,7 +68,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <div className="min-h-screen font-sans selection:bg-brand-amber selection:text-brand-navy bg-white dark:bg-brand-navy text-brand-navy dark:text-white transition-colors duration-300 flex flex-col items-center">
+      <div className="min-h-screen font-sans selection:bg-brand-amber selection:text-brand-navy bg-white dark:bg-brand-navy text-brand-navy dark:text-white transition-colors duration-300 flex flex-col">
         <Navbar 
           currentUser={currentUser} 
           onLoginClick={() => setIsAuthModalOpen(true)} 
@@ -78,7 +78,7 @@ export default function App() {
           toggleTheme={() => setIsDark(!isDark)}
         />
 
-        <main className="pt-20 w-full max-w-[90%] flex-grow flex flex-col">
+        <main className="pt-20 w-full flex-grow flex flex-col">
           <Routes>
             <Route path="/" element={
               <Home 

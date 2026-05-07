@@ -4,7 +4,7 @@ import { IndianRupee, Mail, Phone, MapPin } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="bg-brand-navy text-white pt-20 pb-10 px-4">
-      <div className="max-w-7xl auto">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
